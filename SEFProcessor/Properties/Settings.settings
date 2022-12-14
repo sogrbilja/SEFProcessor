@@ -1,0 +1,42 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SEFProcessor.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="publicApiEndpoint" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://efaktura.mfin.gov.rs</Value>
+    </Setting>
+    <Setting Name="APIKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="API_getUnitMeasures" Type="System.String" Scope="User">
+      <Value Profile="(Default)">/api/publicApi/get-unit-measures</Value>
+    </Setting>
+    <Setting Name="API_salesInvoiceGet" Type="System.String" Scope="User">
+      <Value Profile="(Default)">/api/publicApi/sales-invoice?invoiceId={0}</Value>
+    </Setting>
+    <Setting Name="API_salesInvoice_ubl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">/api/publicApi/sales-invoice/ubl</Value>
+    </Setting>
+    <Setting Name="sandboxApiEndpoint" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://demoefaktura.mfin.gov.rs/</Value>
+    </Setting>
+    <Setting Name="sandboxAPIKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="API_salesInvoice_cancel" Type="System.String" Scope="User">
+      <Value Profile="(Default)">/api/publicApi/sales-invoice/cancel</Value>
+    </Setting>
+    <Setting Name="API_salesInvoice_storno" Type="System.String" Scope="User">
+      <Value Profile="(Default)">/api/publicApi/sales-invoice/storno</Value>
+    </Setting>
+    <Setting Name="Api_purchaseInvoice_changes" Type="System.String" Scope="User">
+      <Value Profile="(Default)">/api/publicApi/purchase-invoice/changes?date={0}</Value>
+    </Setting>
+    <Setting Name="Api_salesInvoice_changes" Type="System.String" Scope="User">
+      <Value Profile="(Default)">/api/publicApi/sales-invoice/changes?date={0}</Value>
+    </Setting>
+    <Setting Name="UpgradeRequired" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
