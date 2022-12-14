@@ -1,6 +1,6 @@
 # SEFProcessor
 
-Slanje racuna prodaje:
+Slanje racuna prodaje (ovo je primer iz Excel Add-In sto sam pravio):
 
 
     private void btInvoice_Click(object sender, RibbonControlEventArgs e)
@@ -444,3 +444,150 @@ Slanje racuna prodaje:
       }
     }
     
+Provera računa:
+
+    private void btCheckInvoice_Click(object sender, RibbonControlEventArgs e)
+    {
+
+      if (!PublicApi.checkAPIKeys())
+      {
+        PublicApi.PropertyEditor(DDCommon.Language.srb, (IWin32Window)this.Parent);
+        return;
+      }
+
+      Excel.Worksheet sht = _app.ActiveSheet;
+      if (sht.Range[Properties.Settings.Default.Cell_SEF_Broj].Value != null)
+      {
+        (getInvoiceResponse, sefFailure) data = PublicApi.salesInvoiceGet(Convert.ToInt64(sht.Range[Properties.Settings.Default.Cell_SEF_Broj].Value));
+
+        if (data.Item1 != null)
+        {
+          MessageBox.Show(string.Format("Račun je u statusu:\n{0}\n{1}", data.Item1.status, data.Item1.cirStatus), "Provera statusa računa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+        }
+        else if (data.Item2 != null)
+        {
+          MessageBox.Show(string.Format("{0}\n\n{1}\n\n{2}", data.Item2.requestId, data.Item2.Message, data.Item2.FieldName), data.Item2.ErrorCode, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        }
+      }
+      else
+      {
+        MessageBox.Show("Ovaj račun nema SEF broj!", "Provera statusa računa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+      }
+    }
+    
+Otkazivanje računa:
+    
+    private void btInvoiceCancel_Click(object sender, RibbonControlEventArgs e)
+    {
+
+      if (!PublicApi.checkAPIKeys())
+      {
+        PublicApi.PropertyEditor(DDCommon.Language.srb, (IWin32Window)this.Parent);
+        return;
+      }
+
+      Excel.Worksheet sht = _app.ActiveSheet;
+
+      if (sht.Range[Properties.Settings.Default.Cell_SEF_Broj].Value != null)
+      {
+        var cr = new salesInvoiceCancelRequest()
+        {
+          invoiceId = Convert.ToInt64(sht.Range[Properties.Settings.Default.Cell_SEF_Broj].Value),
+          cancelComments = ""
+        };
+
+        var result = DDCommon.PropertyEditor(cr, DDCommon.Language.srb, (IWin32Window)this.Parent);
+
+        if (result.changed)
+        {
+          cr = (salesInvoiceCancelRequest)result.result;
+        }
+        else
+        {
+          return;
+        }
+
+        if (cr.cancelComments.Length < 1)
+        {
+          MessageBox.Show("Razlog otkazivanja računa je obavezan", "Otkazivanja računa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          return;
+        }
+
+        (dynamic data, sefFailure error) data = PublicApi.salesInvoiceCancel(cr);
+
+        if (data.Item1 != null)
+        {
+          MessageBox.Show("Račun je u statusu: " + data.Item1["Status"].Value, "Otkazivanja računa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        else if (data.Item2 != null)
+        {
+          MessageBox.Show(string.Format("{0}\n\n{1}\n\n{2}", data.Item2.requestId, data.Item2.Message, data.Item2.FieldName), data.Item2.ErrorCode, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        }
+      }
+      else
+      {
+        MessageBox.Show("Ovaj račun nema SEF broj!", "Otkazivanja računa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+      }
+    }    
+    
+Storniranje računa:
+
+    private void btStorno_Click(object sender, RibbonControlEventArgs e)
+    {
+      if (!PublicApi.checkAPIKeys())
+      {
+        PublicApi.PropertyEditor(DDCommon.Language.srb, (IWin32Window)this.Parent);
+        return;
+      }
+
+      Excel.Worksheet sht = _app.ActiveSheet;
+
+      if (sht.Range[Properties.Settings.Default.Cell_SEF_Broj].Value != null)
+      {
+        var cr = new salesInvoiceStornoRequest()
+        {
+          invoiceId = Convert.ToInt64(sht.Range[Properties.Settings.Default.Cell_SEF_Broj].Value),
+          stornoNumber = "",
+          stornoComment = ""
+        };
+
+
+        var result = DDCommon.PropertyEditor(cr, DDCommon.Language.srb, (IWin32Window)this.Parent);
+
+        if (result.changed)
+        {
+          cr = (salesInvoiceStornoRequest)result.result;
+        }
+        else
+        {
+          return;
+        }
+
+        if (cr.stornoNumber.Length < 1)
+        {
+          MessageBox.Show("Šifra/broj storniranja računa je obavezan", "Storniranje računa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          return;
+        }
+        if (cr.stornoComment.Length < 1)
+        {
+          MessageBox.Show("Razlog storniranja računa je obavezan", "Storniranje računa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          return;
+        }
+
+        (dynamic data, sefFailure error) data = PublicApi.salesInvoiceStorno(cr);
+
+        if (data.Item1 != null)
+        {
+          MessageBox.Show("Račun je u statusu: " + data.Item1["Status"].Value, "Storniranje računa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        else if (data.Item2 != null)
+        {
+          MessageBox.Show(string.Format("{0}\n\n{1}\n\n{2}", data.Item2.requestId, data.Item2.Message, data.Item2.FieldName), data.Item2.ErrorCode, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        }
+      }
+      else
+      {
+        MessageBox.Show("Ovaj račun nema SEF broj!", "Otkazivanja računa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+      }
+    }
